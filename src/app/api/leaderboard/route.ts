@@ -15,9 +15,9 @@ export async function GET(req: NextRequest) {
     const entries = top.map((u, i) => ({
       rank: i + 1,
       userId: u._id.toString(),
-      name: u.username,
-      score: u.highScore,
-      level: u.level,
+      name: u.username || "???" //falback,
+      score: u.highScore ?? 0,
+      level: u.level ?? 0,
       date: new Date(u.updatedAt as Date).toLocaleDateString('pt-BR'),
     }))
 
