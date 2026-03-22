@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import {
   IconPlayerPlay, IconTrophy, IconPalette, IconTerminal2,
   IconBolt, IconWall, IconBomb, IconVolumeOff, IconVolume,
-  IconUsers, IconLogout, IconUser,
+  IconUsers, IconLogout, IconUser, IconGhost,
 } from '@tabler/icons-react'
 import { useAuthStore } from '@/lib/authStore'
 import { soundManager } from '@/lib/sound'
@@ -98,12 +98,20 @@ export default function MenuScreen({ onPlay, onLeaderboard, onSkins, onMultiplay
         </div>
 
         {user && (
-          <div className="flex items-center gap-3 px-4 py-2 rounded border border-dark-500 bg-dark-800/60">
-            <IconUser size={14} className="text-neon-green" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded border bg-dark-800/60"
+            style={{ borderColor: user.isGuest ? '#ffffff15' : '#1a2d3d' }}>
+            {user.isGuest
+              ? <IconGhost size={14} className="text-dark-300" />
+              : <IconUser size={14} className="text-neon-green" />}
             <div className="flex items-center gap-3 font-mono text-xs">
-              <span className="text-neon-green font-bold">{user.username}</span>
-              <span className="text-dark-300">LVL <span className="text-neon-cyan">{user.level}</span></span>
-              <span className="text-dark-300">BEST <span className="text-neon-yellow">{user.highScore}</span></span>
+              <span style={{ color: user.isGuest ? '#8899aa' : '#00ff88' }} className="font-bold">
+                {user.username}
+                {user.isGuest && <span className="text-[9px] ml-1.5 opacity-50">CONVIDADO</span>}
+              </span>
+              {!user.isGuest && <>
+                <span className="text-dark-300">LVL <span className="text-neon-cyan">{user.level}</span></span>
+                <span className="text-dark-300">BEST <span className="text-neon-yellow">{user.highScore}</span></span>
+              </>}
             </div>
           </div>
         )}

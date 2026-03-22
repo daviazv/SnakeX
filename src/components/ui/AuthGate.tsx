@@ -4,17 +4,17 @@ import { useEffect, useState } from 'react'
 import {
   IconTerminal2, IconUser, IconLock, IconMail,
   IconPlayerPlay, IconEye, IconEyeOff, IconAlertCircle,
+  IconGhost,
 } from '@tabler/icons-react'
 import { useAuthStore } from '@/lib/authStore'
 import type { AuthUser } from '@/lib/authStore'
-import clsx from 'clsx'
 
 interface AuthGateProps {
   children: React.ReactNode
 }
 
 export default function AuthGate({ children }: AuthGateProps) {
-  const { user, loading, setUser, setLoading } = useAuthStore()
+  const { user, loading, setUser, setLoading, loginAsGuest } = useAuthStore()
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -38,12 +38,12 @@ export default function AuthGate({ children }: AuthGateProps) {
     )
   }
 
-  if (!user) return <AuthScreen onAuth={setUser} />
+  if (!user) return <AuthScreen onAuth={setUser} onGuest={loginAsGuest} />
 
   return <>{children}</>
 }
 
-function AuthScreen({ onAuth }: { onAuth: (u: AuthUser) => void }) {
+function AuthScreen({ onAuth, onGuest }: { onAuth: (u: AuthUser) => void; onGuest: () => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -85,7 +85,7 @@ function AuthScreen({ onAuth }: { onAuth: (u: AuthUser) => void }) {
       <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(0,255,136,0.04) 0%, transparent 70%)' }} />
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px)' }} />
 
-      <div className="relative z-10 w-full max-w-sm flex flex-col gap-8">
+      <div className="relative z-10 w-full max-w-sm flex flex-col gap-6">
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-center gap-3">
             <IconTerminal2 size={28} className="text-neon-green" style={{ filter: 'drop-shadow(0 0 10px #00ff88)' }} />
@@ -169,7 +169,7 @@ function AuthScreen({ onAuth }: { onAuth: (u: AuthUser) => void }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center justify-center gap-2 py-4 rounded border font-mono text-sm tracking-wider transition-all hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+            className="flex items-center justify-center gap-2 py-4 rounded border font-mono text-sm tracking-wider transition-all hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ borderColor: '#00ff8860', color: '#00ff88', background: '#00ff8815', boxShadow: '0 0 20px #00ff8820' }}
           >
             <IconPlayerPlay size={16} />
@@ -177,8 +177,23 @@ function AuthScreen({ onAuth }: { onAuth: (u: AuthUser) => void }) {
           </button>
         </form>
 
-        <p className="text-center text-[10px] font-mono text-dark-400">
-          Seus scores e progressos ficam salvos na nuvem
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-dark-600" />
+          <span className="text-dark-400 font-mono text-[10px]">OU</span>
+          <div className="flex-1 h-px bg-dark-600" />
+        </div>
+
+        <button
+          onClick={onGuest}
+          className="flex items-center justify-center gap-2 py-3.5 rounded border font-mono text-sm tracking-wider transition-all hover:scale-105 active:scale-95"
+          style={{ borderColor: '#ffffff15', color: '#8899aa', background: '#ffffff05' }}
+        >
+          <IconGhost size={16} />
+          JOGAR SEM CONTA
+        </button>
+
+        <p className="text-center text-[10px] font-mono text-dark-500 -mt-2">
+          Convidados não aparecem no ranking global e não salvam progresso
         </p>
       </div>
     </div>
