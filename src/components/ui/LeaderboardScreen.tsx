@@ -108,6 +108,11 @@ export default function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
             {entries.map((entry) => {
               const isMe = entry.userId === user?.id
               const color = rankColor(entry.rank)
+
+              const displayName = entry.name || '???'
+              const displayScore = entry.score ?? 0
+              const displayLevel = entry.level ?? 0
+              
               return (
                 <div
                   key={entry.userId}
@@ -120,16 +125,16 @@ export default function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
                 >
                   <div className="w-6 flex items-center justify-center flex-shrink-0">{rankIcon(entry.rank)}</div>
                   <div className="flex-1 font-mono text-sm" style={{ color: isMe ? '#00ff88' : color }}>
-                    {entry.name}
+                    {displayName}
                     {isMe && <span className="text-[9px] ml-2 opacity-60">VOCÊ</span>}
                   </div>
                   <div className="flex items-center gap-3 text-xs font-mono">
                     <div className="flex items-center gap-1 text-dark-300">
                       <IconChartBar size={11} />
-                      <span>LVL {entry.level}</span>
+                      <span>LVL {displayLevel}</span>
                     </div>
                     <div className="font-bold tabular-nums" style={{ color, minWidth: '60px', textAlign: 'right' }}>
-                      {entry.score.toString().padStart(5, '0')}
+                      {displayScore.toString().padStart(5, '0')}
                     </div>
                   </div>
                   <div className="text-[9px] text-dark-400 font-mono w-16 text-right flex-shrink-0">{entry.date}</div>
